@@ -1,0 +1,32 @@
+---
+import PostItem from '../components/PostItem.astro';
+import TagList from '../components/TagList.astro';
+import { type Lang, t, url } from '../i18n';
+import Base from '../layouts/Base.astro';
+import type { Post } from '../lib/posts';
+
+interface Props {
+	lang: Lang;
+	tag: string;
+	tags: [string, number][];
+	posts: Post[];
+}
+const { lang, tag, tags, posts } = Astro.props;
+const s = t(lang);
+// 两种语言的标签名不同，切换语言时回到对方的文章列表
+const switchHref = url(lang === 'zh' ? 'en' : 'zh', '/blog');
+---
+
+<Base title={s.tagTitle(tag)} description={s.tagDesc(tag)} switchHref={switchHref} hasAlternate={false}>
+	<header class="page-head">
+		<h1># {tag}</h1>
+		<p>{s.tagCount(posts.length)} · <a href={url(lang, '/blog')}>{s.viewAll}</a></p>
+	</header>
+	<div class="layout">
+		<section>{posts.map((post) => <PostItem item={{ post, lang }} lang={lang} />)}</section>
+		<aside>
+			<h2 class="side-title">{s.allTags}</h2>
+			<TagList tags={tags} lang={lang} current={tag} />
+		</aside>
+	</div>
+</Base>

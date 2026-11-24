@@ -1,37 +1,38 @@
 ---
-import { LANG_COLORS } from '../consts';
+import { LANG_COLORS, type Project } from '../consts';
+import { type Lang, t } from '../i18n';
 
 interface Props {
-	name: string;
-	desc: string;
-	lang: string;
-	repo: string;
-	url?: string;
-	fork?: string;
+	project: Project;
+	lang: Lang;
 	compact?: boolean;
 }
-const { name, desc, lang, repo, url, fork, compact = false } = Astro.props;
-const dot = LANG_COLORS[lang] ?? '#999';
+const { project, lang, compact = false } = Astro.props;
+const { name, repo, url, fork } = project;
+const desc = project.desc[lang];
+const code = project.lang;
+const s = t(lang);
+const dot = LANG_COLORS[code] ?? '#999';
 ---
 
 {compact ? (
 	<div class="mini">
 		<div class="mini-head">
 			<a href={url ?? repo} target="_blank" rel="noopener">{name}</a>
-			<span class="lang"><i style={`background:${dot}`}></i>{lang}</span>
+			<span class="lang"><i style={`background:${dot}`}></i>{code}</span>
 		</div>
 		<p>{desc}</p>
 	</div>
 ) : (
 	<div class="card">
 		<h3>{name}</h3>
-		{fork && <div class="fork">Fork 自 {fork}</div>}
+		{fork && <div class="fork">{s.forkedFrom} {fork}</div>}
 		<p>{desc}</p>
 		<div class="foot">
-			<span class="lang"><i style={`background:${dot}`}></i>{lang}</span>
+			<span class="lang"><i style={`background:${dot}`}></i>{code}</span>
 			<span class="links">
-				{url && <a href={url} target="_blank" rel="noopener">主页 ↗</a>}
-				<a href={repo} target="_blank" rel="noopener">源码 ↗</a>
+				{url && <a href={url} target="_blank" rel="noopener">{s.website}</a>}
+				<a href={repo} target="_blank" rel="noopener">{s.source}</a>
 			</span>
 		</div>
 	</div>

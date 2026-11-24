@@ -1,0 +1,13 @@
+---
+import { render } from 'astro:content';
+import BlogPost from '../../../layouts/BlogPost.astro';
+import { postPaths } from '../../../views/PostPage';
+
+export const getStaticPaths = () => postPaths('en');
+const { post, lang, prev, next, switchHref, hasAlternate } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<BlogPost {...{ post, lang, prev, next, switchHref, hasAlternate, headings }}>
+	<Content />
+</BlogPost>

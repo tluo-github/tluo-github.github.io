@@ -63,7 +63,7 @@ $ip netns exec dog ip link set dev lo up
 $ ip netns exec bruce ip addr add 10.0.0.1/24 dev veth_bruce
 $ ip netns exec bruce ip link set dev veth_bruce up
 
-#为spdb 中的 veth_dog 设置IP,并启动
+#为 dog 中的 veth_dog 设置IP,并启动
 $ ip netns exec dog ip addr add 10.0.0.2/24 dev veth_dog
 $ ip netns exec dog ip link set dev veth_dog up
 

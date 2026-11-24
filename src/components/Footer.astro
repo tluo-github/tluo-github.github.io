@@ -1,14 +1,20 @@
 ---
-import { AUTHOR, GITHUB_URL, MOTTO, SINCE } from '../consts';
+import { AUTHOR, GITHUB_URL, SINCE, SITE } from '../consts';
+import { type Lang, url } from '../i18n';
+
+interface Props {
+	lang: Lang;
+}
+const { lang } = Astro.props;
 ---
 
 <footer class="container">
 	<div class="inner">
-		<span>© {SINCE}–{new Date().getFullYear()} {AUTHOR} · {MOTTO}</span>
+		<span>© {SINCE}–{new Date().getFullYear()} {AUTHOR} · {SITE[lang].motto}</span>
 		<span class="links">
 			<a href={GITHUB_URL} target="_blank" rel="noopener">GitHub</a>
 			<span>·</span>
-			<a href="/rss.xml">RSS</a>
+			<a href={url(lang, '/rss.xml')}>RSS</a>
 			<span>·</span>
 			<a href="https://astro.build" target="_blank" rel="noopener">Built with Astro</a>
 		</span>

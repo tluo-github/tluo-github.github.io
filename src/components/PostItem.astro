@@ -1,24 +1,32 @@
 ---
-import { type Post, readingMinutes, summaryOf } from '../lib/posts';
+import { type Lang, t } from '../i18n';
+import { type PostRef, postUrl, readingMinutes, summaryOf } from '../lib/posts';
 import FormattedDate from './FormattedDate.astro';
 
 interface Props {
-	post: Post;
+	item: PostRef;
+	/** 当前页面的语言 */
+	lang: Lang;
 	dateFormat?: 'iso' | 'md';
 }
-const { post, dateFormat = 'iso' } = Astro.props;
+const { item, lang, dateFormat = 'iso' } = Astro.props;
+const { post, lang: postLang } = item;
 const summary = summaryOf(post);
+const s = t(lang);
 ---
 
 <article class="item">
-	<h3><a href={`/blog/${post.id}/`}>{post.data.title}</a></h3>
+	<h3>
+		<a href={postUrl(postLang, post.id)}>{post.data.title}</a>
+		{postLang !== lang && <span class="badge">{s.otherLang}</span>}
+	</h3>
 	{summary && <p class="summary">{summary}</p>}
 	<div class="meta">
-		<FormattedDate date={post.data.pubDate} format={dateFormat} />
+		<FormattedDate date={post.data.pubDate} format={dateFormat} lang={lang} />
 		<span>·</span>
-		<span>约 {readingMinutes(post)} 分钟</span>
+		<span>{s.minutes(readingMinutes(post, postLang))}</span>
 		{post.data.tags.length > 0 && <span>·</span>}
-		{post.data.tags.map((t) => <span class="t">{t}</span>)}
+		{post.data.tags.map((tag) => <span class="t">{tag}</span>)}
 	</div>
 </article>
 <style>
@@ -37,6 +45,16 @@ const summary = summaryOf(post);
 	}
 	h3 a:hover {
 		color: var(--accent);
+	}
+	.badge {
+		margin-left: 8px;
+		padding: 1px 6px;
+		font-size: 12px;
+		font-weight: 500;
+		vertical-align: 2px;
+		color: var(--muted);
+		border: 1px solid var(--border-strong);
+		border-radius: 4px;
 	}
 	.summary {
 		margin: 6px 0 0;

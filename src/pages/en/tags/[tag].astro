@@ -1,0 +1,8 @@
+---
+import TagPage from '../../../views/TagPage.astro';
+import { tagPaths } from '../../../views/tagPaths';
+
+export const getStaticPaths = () => tagPaths('en');
+---
+
+<TagPage {...Astro.props} />

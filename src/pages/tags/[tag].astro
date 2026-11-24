@@ -1,35 +1,8 @@
 ---
-import PostItem from '../../components/PostItem.astro';
-import TagList from '../../components/TagList.astro';
-import Base from '../../layouts/Base.astro';
-import { getAllTags, getPosts, type Post } from '../../lib/posts';
+import TagPage from '../../views/TagPage.astro';
+import { tagPaths } from '../../views/tagPaths';
 
-export async function getStaticPaths() {
-	const posts = await getPosts();
-	const tags = getAllTags(posts);
-	return tags.map(([tag]) => ({
-		params: { tag },
-		props: { tag, tags, posts: posts.filter((p) => p.data.tags.includes(tag)) },
-	}));
-}
-interface Props {
-	tag: string;
-	tags: [string, number][];
-	posts: Post[];
-}
-const { tag, tags, posts } = Astro.props;
+export const getStaticPaths = () => tagPaths('zh');
 ---
 
-<Base title={`标签：${tag}`} description={`标签为「${tag}」的文章`}>
-	<header class="page-head">
-		<h1># {tag}</h1>
-		<p>{posts.length} 篇文章 · <a href="/blog">查看全部文章</a></p>
-	</header>
-	<div class="layout">
-		<section>{posts.map((post) => <PostItem post={post} />)}</section>
-		<aside>
-			<h2 class="side-title">所有标签</h2>
-			<TagList tags={tags} current={tag} />
-		</aside>
-	</div>
-</Base>
+<TagPage {...Astro.props} />

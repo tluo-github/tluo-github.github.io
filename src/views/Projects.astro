@@ -1,0 +1,55 @@
+---
+import ProjectCard from '../components/ProjectCard.astro';
+import { GITHUB_URL, PROJECT_GROUPS, PROJECTS } from '../consts';
+import { type Lang, t } from '../i18n';
+import Base from '../layouts/Base.astro';
+
+interface Props {
+	lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang);
+---
+
+<Base title={s.projects} description={s.projectsDesc}>
+	<header class="page-head">
+		<h1>{s.projects}</h1>
+		<p>{s.projectsIntro} <a href={GITHUB_URL} target="_blank" rel="noopener">GitHub</a>{lang === 'zh' ? '。' : '.'}</p>
+	</header>
+	{PROJECT_GROUPS.map((g) => (
+		<section class="group">
+			<div class="group-head">
+				<h2>{g.title[lang]}</h2>
+				<p>{g.desc[lang]}</p>
+			</div>
+			<div class="grid">
+				{PROJECTS.filter((p) => p.group === g.key).map((p) => <ProjectCard project={p} lang={lang} />)}
+			</div>
+		</section>
+	))}
+</Base>
+<style>
+	.group + .group {
+		margin-top: 56px;
+	}
+	.group-head {
+		display: flex;
+		align-items: baseline;
+		gap: 16px;
+		margin-bottom: 20px;
+	}
+	h2 {
+		margin: 0;
+		font-size: 20px;
+	}
+	.group-head p {
+		margin: 0;
+		font-size: 14px;
+		color: var(--muted);
+	}
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 24px;
+	}
+</style>

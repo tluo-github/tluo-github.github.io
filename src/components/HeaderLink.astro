@@ -1,11 +1,15 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
+import { parseUrl } from '../i18n';
 
 type Props = HTMLAttributes<'a'>;
 
 const { href, class: className, ...props } = Astro.props;
-const first = Astro.url.pathname.match(/[^/]+/)?.[0];
-const isActive = href === '/' + (first === 'tags' ? 'blog' : (first ?? ''));
+const section = (p: string) => {
+	const first = parseUrl(p).path.match(/[^/]+/)?.[0] ?? '';
+	return first === 'tags' ? 'blog' : first;
+};
+const isActive = !!href && section(String(href)) === section(Astro.url.pathname);
 ---
 
 <a href={href} class:list={[className, { active: isActive }]} {...props}><slot /></a>

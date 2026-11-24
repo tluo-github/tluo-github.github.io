@@ -2,30 +2,36 @@
 import type { MarkdownHeading } from 'astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Toc from '../components/Toc.astro';
-import { type Post, readingMinutes, summaryOf, tagUrl } from '../lib/posts';
+import { type Lang, t } from '../i18n';
+import { type Post, postUrl, readingMinutes, summaryOf, tagUrl } from '../lib/posts';
 import Base from './Base.astro';
 
 interface Props {
 	post: Post;
+	lang: Lang;
 	headings: MarkdownHeading[];
 	prev?: Post;
 	next?: Post;
+	/** 另一种语言的版本地址；没有译文时为该语言的文章列表 */
+	switchHref: string;
+	hasAlternate: boolean;
 }
-const { post, headings, prev, next } = Astro.props;
+const { post, lang, headings, prev, next, switchHref, hasAlternate } = Astro.props;
 const { title, pubDate, updatedDate, tags } = post.data;
 const summary = summaryOf(post);
+const s = t(lang);
 ---
 
-<Base title={title} description={summary ?? title} type="article">
+<Base title={title} description={summary ?? title} type="article" switchHref={switchHref} hasAlternate={hasAlternate}>
 	<div class="layout post">
-		<article>
+		<article data-copy={s.copy} data-copied={s.copied}>
 			<header class="post-head">
 				<div class="meta">
-					<FormattedDate date={pubDate} format="cn" />
-					{updatedDate && <span>· 更新于 <FormattedDate date={updatedDate} format="cn" /></span>}
-					<span>· 约 {readingMinutes(post)} 分钟</span>
+					<FormattedDate date={pubDate} format="long" lang={lang} />
+					{updatedDate && <span>· {s.updated} <FormattedDate date={updatedDate} format="long" lang={lang} /></span>}
+					<span>· {s.minutes(readingMinutes(post, lang))}</span>
 					{tags.length > 0 && <span>·</span>}
-					{tags.map((t) => <a class="t" href={tagUrl(t)}>{t}</a>)}
+					{tags.map((tag) => <a class="t" href={tagUrl(lang, tag)}>{tag}</a>)}
 				</div>
 				<h1>{title}</h1>
 				{summary && <p class="lead">{summary}</p>}
@@ -37,24 +43,27 @@ const summary = summaryOf(post);
 				{(prev || next) && (
 					<nav class="pager">
 						{next ? (
-							<a href={`/blog/${next.id}/`}><span>← 上一篇</span>{next.data.title}</a>
+							<a href={postUrl(lang, next.id)}><span>{s.newer}</span>{next.data.title}</a>
 						) : <i></i>}
 						{prev ? (
-							<a class="right" href={`/blog/${prev.id}/`}><span>下一篇 →</span>{prev.data.title}</a>
+							<a class="right" href={postUrl(lang, prev.id)}><span>{s.older}</span>{prev.data.title}</a>
 						) : <i></i>}
 					</nav>
 				)}
-				<a class="all" href="/blog">← 所有文章</a>
+				<a class="all" href={lang === 'en' ? '/en/blog' : '/blog'}>{s.backToPosts}</a>
 			</footer>
 		</article>
 		<aside>
-			<div class="sticky"><Toc headings={headings} /></div>
+			<div class="sticky"><Toc headings={headings} lang={lang} /></div>
 		</aside>
 	</div>
 </Base>
 
 <script>
 	// 给代码块加语言标签和复制按钮
+	const article = document.querySelector<HTMLElement>('article[data-copy]');
+	const label = article?.dataset.copy ?? 'Copy';
+	const done = article?.dataset.copied ?? 'Copied';
 	document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre) => {
 		const wrap = document.createElement('div');
 		wrap.className = 'code-wrap';
@@ -70,11 +79,11 @@ const summary = summaryOf(post);
 		const btn = document.createElement('button');
 		btn.className = 'code-copy';
 		btn.type = 'button';
-		btn.textContent = '复制';
+		btn.textContent = label;
 		btn.onclick = async () => {
 			await navigator.clipboard.writeText(pre.innerText);
-			btn.textContent = '已复制';
-			setTimeout(() => (btn.textContent = '复制'), 1500);
+			btn.textContent = done;
+			setTimeout(() => (btn.textContent = label), 1500);
 		};
 		wrap.append(btn);
 	});

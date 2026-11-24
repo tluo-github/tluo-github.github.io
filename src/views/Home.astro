@@ -1,0 +1,97 @@
+---
+import PostItem from '../components/PostItem.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import TagList from '../components/TagList.astro';
+import { AUTHOR, GITHUB_URL, PROJECTS, SITE } from '../consts';
+import { type Lang, t, url } from '../i18n';
+import Base from '../layouts/Base.astro';
+import { getAllTags, getPostList, getPosts } from '../lib/posts';
+
+interface Props {
+	lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang);
+const site = SITE[lang];
+const items = await getPostList(lang);
+const tags = getAllTags(await getPosts(lang));
+---
+
+<Base title={site.title} description={site.description}>
+	<section class="hero">
+		<img src="/avatar.jpg" alt={AUTHOR} width="112" height="112" />
+		<div>
+			<h1>{s.hello(AUTHOR)}</h1>
+			<p class="role">{site.intro}</p>
+			<div class="line">
+				<span class="motto">{site.motto} · {s.based(site.location)}</span>
+				<span class="links">
+					<a href={GITHUB_URL} target="_blank" rel="noopener">GitHub</a>
+					<a href={url(lang, '/rss.xml')}>RSS</a>
+					<a href={url(lang, '/about')}>{s.aboutMe}</a>
+				</span>
+			</div>
+		</div>
+	</section>
+
+	<div class="layout">
+		<section>
+			<h2 class="side-title">{s.recentPosts}</h2>
+			{items.slice(0, 10).map((item) => <PostItem item={item} lang={lang} />)}
+			<a class="more" href={url(lang, '/blog')}>{s.allPosts}</a>
+		</section>
+		<aside>
+			<div class="side-block">
+				<h2 class="side-title">{s.projects}</h2>
+				{PROJECTS.slice(0, 4).map((p) => <ProjectCard project={p} lang={lang} compact />)}
+				<a class="more" href={url(lang, '/projects')}>{s.allProjects}</a>
+			</div>
+			<div class="side-block">
+				<h2 class="side-title">{s.tags}</h2>
+				<TagList tags={tags} lang={lang} />
+			</div>
+		</aside>
+	</div>
+</Base>
+<style>
+	.hero {
+		display: flex;
+		align-items: center;
+		gap: 32px;
+		padding: 72px 0 56px;
+		margin-bottom: 40px;
+		border-bottom: 1px solid var(--border);
+	}
+	.hero img {
+		flex: none;
+		border-radius: 50%;
+		border: 1px solid var(--border);
+	}
+	h1 {
+		margin: 0;
+		font-size: 36px;
+		line-height: 1.3;
+	}
+	.role {
+		margin: 8px 0 0;
+		font-size: 18px;
+	}
+	.line {
+		display: flex;
+		align-items: center;
+		gap: 32px;
+		margin-top: 10px;
+	}
+	.motto {
+		font-size: 15px;
+		color: var(--muted);
+		padding-left: 12px;
+		border-left: 3px solid var(--accent);
+		line-height: 1.1;
+	}
+	.links {
+		display: flex;
+		gap: 20px;
+		font-size: 14px;
+	}
+</style>

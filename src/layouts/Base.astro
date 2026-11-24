@@ -2,25 +2,34 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import { type Lang, parseUrl, t, url } from '../i18n';
 
 interface Props {
 	title: string;
 	description: string;
 	type?: 'website' | 'article';
+	/** 语言切换按钮指向的页面；不传则切到另一种语言的同一路径 */
+	switchHref?: string;
+	/** 是否存在真正对应的另一语言页面（决定是否输出 hreflang） */
+	hasAlternate?: boolean;
 }
-const props = Astro.props;
+const { title, description, type, switchHref, hasAlternate = true } = Astro.props;
+const { lang, path } = parseUrl(Astro.url.pathname);
+const other: Lang = lang === 'zh' ? 'en' : 'zh';
+const switchTo = switchHref ?? url(other, path);
+const alternates = hasAlternate ? { [lang]: Astro.url.pathname, [other]: switchTo } : undefined;
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang={t(lang).htmlLang}>
 	<head>
-		<BaseHead {...props} />
+		<BaseHead title={title} description={description} lang={lang} type={type} alternates={alternates} />
 	</head>
 	<body>
-		<Header />
+		<Header lang={lang} switchHref={switchTo} />
 		<main class="container">
 			<slot />
 		</main>
-		<Footer />
+		<Footer lang={lang} />
 	</body>
 </html>

@@ -1,15 +1,18 @@
 ---
 import type { MarkdownHeading } from 'astro';
+import { type Lang, t } from '../i18n';
 
 interface Props {
 	headings: MarkdownHeading[];
+	lang: Lang;
 }
+const s = t(Astro.props.lang);
 const items = Astro.props.headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 {items.length >= 3 && (
-	<nav class="toc" aria-label="目录">
-		<div class="side-title">目录</div>
+	<nav class="toc" aria-label={s.toc}>
+		<div class="side-title">{s.toc}</div>
 		<ul>
 			{items.map((h) => (
 				<li class={`d${h.depth}`}>
@@ -17,7 +20,7 @@ const items = Astro.props.headings.filter((h) => h.depth === 2 || h.depth === 3)
 				</li>
 			))}
 		</ul>
-		<a class="top" href="#">↑ 回到顶部</a>
+		<a class="top" href="#">{s.backToTop}</a>
 	</nav>
 )}
 
