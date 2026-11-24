@@ -1,0 +1,40 @@
+---
+import { AUTHOR, GITHUB_URL, MOTTO, SINCE } from '../consts';
+---
+
+<footer class="container">
+	<div class="inner">
+		<span>© {SINCE}–{new Date().getFullYear()} {AUTHOR} · {MOTTO}</span>
+		<span class="links">
+			<a href={GITHUB_URL} target="_blank" rel="noopener">GitHub</a>
+			<span>·</span>
+			<a href="/rss.xml">RSS</a>
+			<span>·</span>
+			<a href="https://astro.build" target="_blank" rel="noopener">Built with Astro</a>
+		</span>
+	</div>
+</footer>
+<style>
+	footer {
+		width: 100%;
+		margin-top: 96px;
+	}
+	.inner {
+		display: flex;
+		justify-content: space-between;
+		padding: 32px 0 48px;
+		border-top: 1px solid var(--border);
+		font-size: 14px;
+		color: var(--muted);
+	}
+	.links {
+		display: flex;
+		gap: 8px;
+	}
+	a {
+		color: var(--muted);
+	}
+	a:hover {
+		color: var(--accent);
+	}
+</style>

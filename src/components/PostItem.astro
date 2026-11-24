@@ -1,0 +1,68 @@
+---
+import { type Post, readingMinutes, summaryOf } from '../lib/posts';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+	post: Post;
+	dateFormat?: 'iso' | 'md';
+}
+const { post, dateFormat = 'iso' } = Astro.props;
+const summary = summaryOf(post);
+---
+
+<article class="item">
+	<h3><a href={`/blog/${post.id}/`}>{post.data.title}</a></h3>
+	{summary && <p class="summary">{summary}</p>}
+	<div class="meta">
+		<FormattedDate date={post.data.pubDate} format={dateFormat} />
+		<span>·</span>
+		<span>约 {readingMinutes(post)} 分钟</span>
+		{post.data.tags.length > 0 && <span>·</span>}
+		{post.data.tags.map((t) => <span class="t">{t}</span>)}
+	</div>
+</article>
+<style>
+	.item {
+		padding: 22px 0;
+		border-bottom: 1px solid var(--border);
+	}
+	h3 {
+		margin: 0;
+		font-size: 19px;
+		font-weight: 600;
+		line-height: 1.5;
+	}
+	h3 a {
+		color: var(--heading);
+	}
+	h3 a:hover {
+		color: var(--accent);
+	}
+	.summary {
+		margin: 6px 0 0;
+		font-size: 15px;
+		line-height: 1.7;
+		color: var(--muted);
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+	.meta {
+		margin-top: 8px;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		font-size: 13px;
+		color: var(--faint);
+		font-variant-numeric: tabular-nums;
+	}
+	.t {
+		color: var(--muted);
+	}
+	.t + .t::before {
+		content: '·';
+		margin-right: 6px;
+		color: var(--faint);
+	}
+</style>

@@ -1,0 +1,14 @@
+---
+interface Props {
+	date: Date;
+	format?: 'iso' | 'cn' | 'md';
+}
+const { date, format = 'iso' } = Astro.props;
+const y = date.getUTCFullYear();
+const m = date.getUTCMonth() + 1;
+const d = date.getUTCDate();
+const pad = (n: number) => String(n).padStart(2, '0');
+const text = format === 'cn' ? `${y} 年 ${m} 月 ${d} 日` : format === 'md' ? `${pad(m)}-${pad(d)}` : `${y}-${pad(m)}-${pad(d)}`;
+---
+
+<time datetime={date.toISOString()}>{text}</time>

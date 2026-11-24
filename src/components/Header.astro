@@ -1,0 +1,67 @@
+---
+import { GITHUB_URL, SITE_TITLE } from '../consts';
+import HeaderLink from './HeaderLink.astro';
+import GitHub from './icons/GitHub.astro';
+import Rss from './icons/Rss.astro';
+---
+
+<header>
+	<nav class="container">
+		<a class="brand" href="/">
+			<img src="/avatar.jpg" alt="" width="28" height="28" />
+			<span>{SITE_TITLE}</span>
+		</a>
+		<div class="links">
+			<HeaderLink href="/blog">文章</HeaderLink>
+			<HeaderLink href="/projects">项目</HeaderLink>
+			<HeaderLink href="/about">关于</HeaderLink>
+			<span class="icons">
+				<a href={GITHUB_URL} target="_blank" rel="noopener" aria-label="GitHub"><GitHub /></a>
+				<a href="/rss.xml" aria-label="RSS 订阅"><Rss /></a>
+			</span>
+		</div>
+	</nav>
+</header>
+<style>
+	header {
+		border-bottom: 1px solid var(--border);
+	}
+	nav {
+		height: 64px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.brand {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 17px;
+		font-weight: 600;
+		color: var(--heading);
+	}
+	.brand img {
+		border-radius: 50%;
+	}
+	.brand:hover {
+		color: var(--accent);
+	}
+	.links {
+		display: flex;
+		align-items: center;
+		gap: 32px;
+		height: 100%;
+	}
+	.icons {
+		display: flex;
+		gap: 16px;
+		margin-left: 8px;
+	}
+	.icons a {
+		display: flex;
+		color: var(--muted);
+	}
+	.icons a:hover {
+		color: var(--heading);
+	}
+</style>

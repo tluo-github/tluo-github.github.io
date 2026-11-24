@@ -1,0 +1,27 @@
+---
+import { tagUrl } from '../lib/posts';
+
+interface Props {
+	tags: [string, number][];
+	current?: string;
+}
+const { tags, current } = Astro.props;
+---
+
+<div class="tags">
+	{tags.map(([t, n]) => (
+		<a class:list={['tag-chip', { current: t === current }]} href={tagUrl(t)}>
+			{t}<span>{n}</span>
+		</a>
+	))}
+</div>
+<style>
+	.current {
+		background: var(--accent);
+		color: #fff;
+	}
+	.current:hover {
+		background: var(--accent-hover);
+		color: #fff;
+	}
+</style>
